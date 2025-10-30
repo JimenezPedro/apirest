@@ -1,6 +1,8 @@
 package com.example.apirest.service.impl;
 
+import com.example.apirest.entity.Tarea;
 import com.example.apirest.entity.Usuario;
+import com.example.apirest.repository.TareaRepository;
 import com.example.apirest.repository.UsuarioRepository;
 import com.example.apirest.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,7 @@ import java.util.Optional;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-
+    private final TareaRepository tareaRepository;
 
     @Override
     public List<Usuario> findAll() {
@@ -39,6 +41,20 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public void deleteById(Long id) {
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public Tarea asignarTarea(Long usuarioId, Tarea tarea) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
+        if(usuarioOpt.isEmpty()){
+            throw new RuntimeException("Usuario no encontrado con id: "  + usuarioId);
+        }
+        Usuario usuario = usuarioOpt.get();
+        tarea.setUsuario(usuario);
+        Tarea tareaGuardada = tareaRepository.save(tarea);
+        usuario.getTareas().add(tareaGuardada);
+
+        return tareaGuardada;
     }
 
 }

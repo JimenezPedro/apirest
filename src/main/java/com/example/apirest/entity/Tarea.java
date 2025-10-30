@@ -14,4 +14,7 @@ public class Tarea {
     @Column(nullable = false)
     private String nombre;
     private String descripcion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="usuario_id") //Clave foránea en la tabla de tareas
+    private Usuario usuario;
 }
